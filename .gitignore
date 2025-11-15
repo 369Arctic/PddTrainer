@@ -145,3 +145,5 @@ pnpm-lock.yaml
 sql/
 *.Cache
 ClientBin/
+*log-*
+*.vs
