@@ -1,0 +1,6 @@
+@PddTrainer.Api_HostAddress = http://localhost:5117
+
+GET {{PddTrainer.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
