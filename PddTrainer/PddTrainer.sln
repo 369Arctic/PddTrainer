@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PddTrainer.Api", "PddTrainer.Api\PddTrainer.Api.csproj", "{A5CAEF14-C42A-45BF-A707-43C0D8C7E64F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PddTrainer.Api", "PddTrainer.Api\PddTrainer.Api.csproj", "{A5CAEF14-C42A-45BF-A707-43C0D8C7E64F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PddTrainer.Parser", "PddTrainer.Parser\PddTrainer.Parser.csproj", "{DC5D6910-B6FB-403E-9C16-3FB4D1482063}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{A5CAEF14-C42A-45BF-A707-43C0D8C7E64F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5CAEF14-C42A-45BF-A707-43C0D8C7E64F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5CAEF14-C42A-45BF-A707-43C0D8C7E64F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC5D6910-B6FB-403E-9C16-3FB4D1482063}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC5D6910-B6FB-403E-9C16-3FB4D1482063}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC5D6910-B6FB-403E-9C16-3FB4D1482063}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC5D6910-B6FB-403E-9C16-3FB4D1482063}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
