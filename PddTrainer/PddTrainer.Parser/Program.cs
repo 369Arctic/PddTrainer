@@ -20,14 +20,16 @@ class Program
 
         // Папка для картинок
         var projectRoot = Path.Combine(AppContext.BaseDirectory, "..", "..", "..");
-        projectRoot = Path.GetFullPath(projectRoot); // безопасный корень проекта
-        var imagesDir = Path.Combine(projectRoot, "images");
+        var solutionRoot = Directory.GetParent(projectRoot)!.FullName;  
+        var apiProjectRoot = Path.Combine(solutionRoot, "PddTrainer.Api");
+        var imagesDir = Path.Combine(apiProjectRoot, "imagesDir");
+
         Directory.CreateDirectory(imagesDir);
 
         using var httpClient = new HttpClient();
         httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0");
 
-        var allTickets = new List<TicketDto>(); // список всех билетов
+        var allTickets = new List<TicketDto>();
 
         // ----------------------------
         // Основной цикл по всем билетам
