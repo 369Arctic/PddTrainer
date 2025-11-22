@@ -19,10 +19,10 @@ class Program
         var apiUrl = "https://localhost:7269/api/Tickets";
 
         // Папка для картинок
-        var projectRoot = Path.Combine(AppContext.BaseDirectory, "..", "..", "..");
+        var projectRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
         var solutionRoot = Directory.GetParent(projectRoot)!.FullName;  
         var apiProjectRoot = Path.Combine(solutionRoot, "PddTrainer.Api");
-        var imagesDir = Path.Combine(apiProjectRoot, "imagesDir");
+        var imagesDir = Path.Combine(apiProjectRoot, "wwwroot", "imagesDir");
 
         Directory.CreateDirectory(imagesDir);
 
@@ -170,14 +170,17 @@ class Program
         catch { imgUri = new Uri(baseUri, Uri.EscapeUriString(rawSrc)); }
 
         var ext = Path.GetExtension(imgUri.LocalPath);
-        if (string.IsNullOrEmpty(ext)) ext = ".jpg";
+        if (string.IsNullOrEmpty(ext)) 
+            ext = ".jpg";
 
-        var imgPath = Path.Combine(imagesDir, $"ticket{ticketNumber}_q{questionIndex}{ext}");
+        var fileName = $"ticket{ticketNumber}_q{questionIndex}{ext}";
+        var imgPath = Path.Combine(imagesDir, fileName);
+
         try
         {
             var data = await httpClient.GetByteArrayAsync(imgUri.AbsoluteUri);
             await File.WriteAllBytesAsync(imgPath, data);
-            return imgPath.Replace("\\", "/");
+            return $"/images/{fileName}";
         }
         catch (Exception ex)
         {
