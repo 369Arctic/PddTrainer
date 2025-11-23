@@ -22,7 +22,7 @@ class Program
         var projectRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
         var solutionRoot = Directory.GetParent(projectRoot)!.FullName;  
         var apiProjectRoot = Path.Combine(solutionRoot, "PddTrainer.Api");
-        var imagesDir = Path.Combine(apiProjectRoot, "wwwroot", "imagesDir");
+        var imagesDir = Path.Combine(apiProjectRoot, "wwwroot", "images");
 
         Directory.CreateDirectory(imagesDir);
 

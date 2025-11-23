@@ -50,6 +50,8 @@ app.UseCors("AllowReactDevServer");
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+
 app.UseAuthorization();
 
 app.MapControllers();
