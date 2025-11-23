@@ -147,3 +147,8 @@ sql/
 ClientBin/
 *log-*
 *.vs
+
+# React client
+PddTrainer.WebClient/node_modules/
+PddTrainer.WebClient/.vite/
+PddTrainer.WebClient/dist/
