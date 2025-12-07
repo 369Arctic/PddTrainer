@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getTicketById } from "../api/tickets";
+import { useNavigate } from "react-router-dom";
 import type { Ticket, Question, AnswerOption } from "../types/models";
 
 const TicketPage: React.FC = () => {
+    const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -12,6 +14,7 @@ const TicketPage: React.FC = () => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
     const [answers, setAnswers] = useState<{ [key: number]: boolean }>({});
     const [selectedAnswerId, setSelectedAnswerId] = useState<number | null>(null);
+    const [answersText, setAnswersText] = useState<{ [key: number]: string }>({});
     const [showHint, setShowHint] = useState<boolean>(false);
 
     useEffect(() => {
@@ -20,6 +23,11 @@ const TicketPage: React.FC = () => {
                 if (!id) return;
                 const data = await getTicketById(Number(id));
                 setTicket(data);
+                // Добавляем orderNumber
+                data.questions = data.questions.map((q: any, idx: number) => ({
+                    ...q,
+                    orderNumber: idx + 1
+                }));
             } catch (err) {
                 console.error(err);
                 setError("Ошибка при загрузке билета");
@@ -30,6 +38,18 @@ const TicketPage: React.FC = () => {
         fetchTicket();
     }, [id]);
 
+    useEffect(() => {
+        if (!loading && ticket) {
+            const question = ticket.questions[currentQuestionIndex];
+
+            if (!question) {
+                navigate(`/ticket/${ticket.id}/result`, {
+                    state: { answers, answersText }
+                });
+            }
+        }
+    }, [loading, ticket, currentQuestionIndex, answers, navigate]);
+
     if (loading) return <div>Загрузка билета...</div>;
     if (error) return <div>{error}</div>;
     if (!ticket) return <div>Билет не найден</div>;
@@ -37,42 +57,13 @@ const TicketPage: React.FC = () => {
     const question: Question | undefined = ticket.questions[currentQuestionIndex];
 
     // === Статистика после прохождения всех вопросов ===
-    if (!question) {
-        const total = ticket.questions.length;
-        const correct = Object.values(answers).filter(v => v).length;
-
-        return (
-            <div style={{ textAlign: "center", padding: "20px" }}>
-                <h2>Билет пройден! 🎉</h2>
-                <p>Правильных ответов: {correct} из {total}</p>
-                <p>Процент: {((correct / total) * 100).toFixed(0)}%</p>
-                <button
-                    onClick={() => {
-                        setCurrentQuestionIndex(0);
-                        setAnswers({});
-                        setSelectedAnswerId(null);
-                        setShowHint(false);
-                    }}
-                    style={{
-                        padding: "8px 15px",
-                        borderRadius: "6px",
-                        backgroundColor: "#007bff",
-                        color: "white",
-                        border: "none",
-                        cursor: "pointer",
-                        marginTop: "10px",
-                    }}
-                >
-                    Пройти заново
-                </button>
-            </div>
-        );
-    }
+    if (!question) return null;
 
     const handleAnswerClick = (answer: AnswerOption) => {
         if (answers[question.id] !== undefined) return;
 
         setSelectedAnswerId(answer.id);
+        setAnswersText(prev => ({ ...prev, [question.id]: answer.text }));
         const isCorrect = answer.isCorrect;
         setAnswers(prev => ({ ...prev, [question.id]: isCorrect }));
 

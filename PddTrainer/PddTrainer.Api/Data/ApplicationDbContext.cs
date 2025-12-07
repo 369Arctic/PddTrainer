@@ -10,6 +10,7 @@ namespace PddTrainer.Api.Data
         public DbSet<Ticket> Tickets => Set<Ticket>();
         public DbSet<Question> Questions => Set<Question>();
         public DbSet<AnswerOption> AnswerOptions => Set<AnswerOption>();
+        public DbSet<Theme> Themes => Set<Theme>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +29,13 @@ namespace PddTrainer.Api.Data
                 .WithOne(a => a.Question)
                 .HasForeignKey(a => a.QuestionId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Question → Theme
+            modelBuilder.Entity<Question>()
+                .HasOne(q => q.Theme)
+                .WithMany(t => t.Questions)
+                .HasForeignKey(q => q.ThemeId)
+                .OnDelete(DeleteBehavior.Restrict); 
         }
     }
 }
