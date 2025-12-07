@@ -10,5 +10,8 @@
         public Ticket? Ticket { get; set; }
 
         public ICollection<AnswerOption> AnswerOptions { get; set; } = new List<AnswerOption>();
+
+        public int? ThemeId { get; set; }
+        public Theme? Theme { get; set; }
     }
 }
