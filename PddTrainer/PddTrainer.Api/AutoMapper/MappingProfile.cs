@@ -11,6 +11,7 @@ namespace PddTrainer.Api.AutoMapper
             CreateMap<Ticket, TicketDto>().ReverseMap();
             CreateMap<Question, QuestionDto>().ReverseMap();
             CreateMap<AnswerOption, AnswerOptionDto>().ReverseMap();
+            CreateMap<Theme, ThemeDto>().ReverseMap();
         }
     }
 }
