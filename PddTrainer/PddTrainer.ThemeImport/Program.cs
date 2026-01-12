@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -15,8 +15,7 @@ class Program
 
     static async Task Main()
     {
-        // Регистрация провайдера кодировок для поддержки "windows-1251" и других кодировок,
-        // не включённых по умолчанию в .NET Core.
+        // Регистрация провайдера кодировок для поддержки "windows-1251" и других кодировок, не включённых по умолчанию в .NET Core.
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
         using var http = new HttpClient();
@@ -40,14 +39,13 @@ class Program
         try
         {
             // Делаем отдельный HEAD-запрос или получаем Content-Type из предыдущего запроса.
-            // Поскольку мы уже скачали байты, выполним простой GET заголовков:
+            // Т.к байты уже есть - получаем заголовки
             using var headReq = new HttpRequestMessage(HttpMethod.Head, themesUrl);
             using var headResp = await http.SendAsync(headReq);
             charset = headResp.Content.Headers.ContentType?.CharSet;
         }
         catch
         {
-            // если HEAD не прошёл, попытаемся получить CharSet из HTML meta (ниже)
             charset = null;
         }
 
@@ -86,7 +84,7 @@ class Program
             {
                 string text = node.InnerText.Trim();
 
-                // Пример: "Дорожные знаки (127 вопросов)" → "Дорожные знаки"
+                // Пример: "Дорожные знаки (127 вопросов)" будет как "Дорожные знаки"
                 int idx = text.IndexOf("(");
                 if (idx > 0)
                     text = text[..idx].Trim();
@@ -133,7 +131,7 @@ class Program
             {
                 var enc = Encoding.GetEncoding(name);
                 var s = enc.GetString(bytes);
-                // Небольшая валидация: должен содержать кириллицу или теги <html>
+                // Проверка на содержание кириллицы или теги <html>
                 if (!string.IsNullOrWhiteSpace(s) && (s.Contains("<html", StringComparison.OrdinalIgnoreCase) || s.Any(c => c >= 0x0400 && c <= 0x04FF)))
                     return s;
             }
@@ -143,14 +141,14 @@ class Program
             }
         }
 
-        // Попробуем UTF8 с проверкой ошибок
+        // Попытка UTF8 с проверкой ошибок
         try
         {
             return Encoding.UTF8.GetString(bytes);
         }
         catch
         {
-            // крайний случай
+            // Крайняя попытка использовать кодировку по умолчанию.
             return Encoding.Default.GetString(bytes);
         }
     }

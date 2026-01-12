@@ -5,7 +5,9 @@ VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PddTrainer.Api", "PddTrainer.Api\PddTrainer.Api.csproj", "{A5CAEF14-C42A-45BF-A707-43C0D8C7E64F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PddTrainer.Parser", "PddTrainer.Parser\PddTrainer.Parser.csproj", "{DC5D6910-B6FB-403E-9C16-3FB4D1482063}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PddTrainer.Parser", "PddTrainer.Parser\PddTrainer.Parser.csproj", "{DC5D6910-B6FB-403E-9C16-3FB4D1482063}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PddTrainer.ThemeImport", "PddTrainer.ThemeImport\PddTrainer.ThemeImport.csproj", "{72B58F42-D628-4A11-9903-B898019A0E6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{DC5D6910-B6FB-403E-9C16-3FB4D1482063}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC5D6910-B6FB-403E-9C16-3FB4D1482063}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC5D6910-B6FB-403E-9C16-3FB4D1482063}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72B58F42-D628-4A11-9903-B898019A0E6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72B58F42-D628-4A11-9903-B898019A0E6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72B58F42-D628-4A11-9903-B898019A0E6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72B58F42-D628-4A11-9903-B898019A0E6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
