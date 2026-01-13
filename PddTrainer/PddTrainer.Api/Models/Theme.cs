@@ -10,5 +10,6 @@ namespace PddTrainer.Api.Models
         public string Title { get; set; }
 
         public List<Question> Questions { get; set; } = new List<Question>();
+        public string SourceUrl { get; set; }
     }
 }

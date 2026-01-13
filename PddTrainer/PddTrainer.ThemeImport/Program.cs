@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -76,7 +76,7 @@ class Program
 
         var nodes = doc.DocumentNode.SelectNodes("//div[@class='b-withPddLegacyIcon']/a");
 
-        var themes = new List<string>();
+        var themes = new List<ThemeDto>();
 
         if (nodes != null)
         {
@@ -88,29 +88,32 @@ class Program
                 int idx = text.IndexOf("(");
                 if (idx > 0)
                     text = text[..idx].Trim();
+                string url = node.GetAttributeValue("href", "").Trim();
 
-                themes.Add(text);
+                themes.Add(new ThemeDto
+                {
+                    Title = text,
+                    SourceUrl = url
+                });
             }
         }
 
         Console.WriteLine($"Найдено тем: {themes.Count}");
 
-        foreach (var title in themes)
+        foreach (var theme in themes)
         {
-            Console.WriteLine($"Импорт темы: {title}");
+            Console.WriteLine($"Импорт темы: {theme.Title} ({theme.SourceUrl})");
 
-            var dto = new ThemeDto { Title = title };
-
-            var response = await http.PostAsJsonAsync(apiUrl, dto);
+            var response = await http.PostAsJsonAsync(apiUrl, theme);
 
             if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"Успешно: {title}");
+                Console.WriteLine($"Успешно: {theme.Title}");
             }
             else
             {
                 string content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Ошибка импорта {title}: {content}");
+                Console.WriteLine($"Ошибка импорта {theme.Title}: {content}");
             }
 
             await Task.Delay(150);

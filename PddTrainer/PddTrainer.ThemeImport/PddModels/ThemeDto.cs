@@ -9,5 +9,7 @@ namespace PddTrainer.ThemeImport.PddModels
     internal class ThemeDto
     {
         public string Title { get; set; }
+
+        public string SourceUrl { get; set; }
     }
 }

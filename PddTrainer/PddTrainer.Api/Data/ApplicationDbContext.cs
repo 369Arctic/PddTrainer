@@ -35,7 +35,7 @@ namespace PddTrainer.Api.Data
                 .HasOne(q => q.Theme)
                 .WithMany(t => t.Questions)
                 .HasForeignKey(q => q.ThemeId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.SetNull); 
         }
     }
 }
