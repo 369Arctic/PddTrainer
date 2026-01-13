@@ -2,11 +2,15 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using PddTrainer.Api;
 using PddTrainer.Api.AutoMapper;
 using PddTrainer.Api.Data;
 using Serilog;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
@@ -26,6 +30,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddDbContext<ApplicationDbContext>
     (options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<QuestionThemeMatcher>();
 
 builder.Services.AddCors(options =>
 {
@@ -38,6 +44,16 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
+
+/* –азовый запуск дл€ сопоставлени€ вопроса-темы.
+using (var scope = app.Services.CreateScope())
+{
+    var matcher = scope.ServiceProvider
+        .GetRequiredService<QuestionThemeMatcher>();
+
+    await matcher.MatchAsync();
+}
+*/
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
