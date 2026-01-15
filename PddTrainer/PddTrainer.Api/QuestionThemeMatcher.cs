@@ -1,14 +1,9 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using PddTrainer.Api.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace PddTrainer.Api
 {
@@ -25,6 +20,9 @@ namespace PddTrainer.Api
             _logger = logger;
         }
 
+        /// <summary>
+        /// Привязать вопросы к темам.
+        /// </summary>
         public async Task MatchAsync()
         {
             _logger.LogInformation("Начало привязки вопросв к темам.");
@@ -93,7 +91,7 @@ namespace PddTrainer.Api
 
                     linked ++;
                 }
-                
+                // Небольшая задержка перед переходом к следующей теме.
                 await Task.Delay(200);
             }
             _logger.LogInformation("Привязка вопросов к темам завершена.");
@@ -101,6 +99,16 @@ namespace PddTrainer.Api
             _logger.LogInformation($"Не найдено в БД: {notFound}");
         }
 
+        /// <summary>
+        /// Загрузить HTML по URL, определить корректную кодировку.
+        /// </summary>
+        /// <param name="url">URL страницы для загрузки.</param>
+        /// <returns>HTML текст страницы.</returns>
+        /// <remarks>
+        /// Метод пробует кодировки: windows-1251, utf-8, windows-1252.
+        /// Если ни одна не подходит, возвращает строку в UTF-8.
+        /// Если возникает ошибка при декодировании - кодировка логируется.
+        /// </remarks>
         private async Task<string> LoadHtmlAsync(string url)
         {
             var bytes = await _http.GetByteArrayAsync(url);
@@ -115,15 +123,20 @@ namespace PddTrainer.Api
                     if (text.Contains("<html", StringComparison.OrdinalIgnoreCase))
                         return text;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Намеренное игнорирование
+                    _logger.LogWarning($"Не удалось декодировать HTML с кодировкой {encName}: {ex.Message}");
                 }
             }
 
             return Encoding.UTF8.GetString(bytes);
         }
 
+        /// <summary>
+        /// Распарсить HTML страницу и извлечь заголовки вопросов.
+        /// </summary>
+        /// <param name="html">HTML текст страницы.</param>
+        /// <returns>Список заголовков вопросов в виде строк.</returns>
         private static List<string> ParseQuestionTitles(string html)
         {
             var doc = new HtmlDocument();
@@ -140,6 +153,17 @@ namespace PddTrainer.Api
                 .ToList();
         }
 
+        /// <summary>
+        /// Нормализация текст вопроса для корректного сравнения.
+        /// </summary>
+        /// <param name="text">Исходный текст вопроса.</param>
+        /// <returns>Нормализованный текст в нижнем регистре, без лишних пробелов и специальных символов.</returns>
+        /// <remarks>
+        /// Заменяет 'ё' на 'е'.
+        /// Убирает лишние пробелы.
+        /// Убирает все символы, кроме букв, цифр и пробелов.
+        /// Декодирует HTML сущности.
+        /// </remarks>
         private static string Normalize(string text)
         {
             if (string.IsNullOrEmpty(text))
