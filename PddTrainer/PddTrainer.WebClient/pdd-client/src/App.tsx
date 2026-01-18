@@ -11,6 +11,7 @@ const App: React.FC = () => {
         <Route path="/" element={<TicketsListPage />} />
          <Route path="/ticket/:id" element={<TicketPage />} />
          <Route path="/ticket/:id/result" element={<TicketResultPage />} />
+         <Route path="/theme/:themeId" element={<TicketPage/>} />
       </Routes>
     </BrowserRouter>
   );
