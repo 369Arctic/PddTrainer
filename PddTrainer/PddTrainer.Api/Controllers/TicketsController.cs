@@ -67,6 +67,39 @@ namespace PddTrainer.Api.Controllers
         }
 
         /// <summary>
+        /// Получить виртуальный (не хранящийся в БД) билет по ID темы.
+        /// </summary>
+        /// <param name="themeId">ID темы.</param>
+        /// Объект <see cref="TicketDto"/>, содержащий название темы и список всех
+        /// вопросов, привязанных к данной теме. В случае отсутствия темы возвращает ошибку.
+        [HttpGet("theme/{themeId}")]
+        public async Task<ActionResult<TicketDto>> GetTicketByThemeId(int themeId)
+        {
+            _logger.Information("Получен запрос на получение билета по теме с Id = {Id}", themeId);
+
+            var theme = await _context.Themes.FirstOrDefaultAsync(u => u.Id == themeId);
+            if (theme == null)
+            {
+                _logger.Warning("Не удалось найти тему с Id = {Id}", themeId);
+                return NotFound(new { message = "Не удалось найти тему." });
+            }
+
+            var questions = await _context.Questions
+                .Where(u => u.ThemeId == themeId)
+                .Include(a => a.AnswerOptions)
+                .ToListAsync();
+
+            var ticketDto = new TicketDto()
+            {
+                Id = themeId,
+                Title = theme.Title,
+                Questions = _mapper.Map<List<QuestionDto>>(questions)
+            };
+
+            return Ok(ticketDto);
+        }
+
+        /// <summary>
         /// Создать новый билет (вместе с вопросами)
         /// </summary>
         /// <param name="ticket">Билет</param>
