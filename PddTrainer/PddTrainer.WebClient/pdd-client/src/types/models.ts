@@ -19,3 +19,8 @@ export interface Ticket {
   title: string;
   questions: Question[];
 }
+
+export interface Theme {
+  id: number;
+  title: string;
+}
