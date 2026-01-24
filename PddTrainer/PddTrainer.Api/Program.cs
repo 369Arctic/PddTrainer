@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using PddTrainer.Api;
 using PddTrainer.Api.AutoMapper;
 using PddTrainer.Api.Data;
+using PddTrainer.Api.Models;
 using Serilog;
 using System.Text;
 
@@ -19,6 +20,19 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 builder.Host.UseSerilog();
+
+var examModes = builder.Configuration.GetSection("Exams").Get<List<ExamMode>>();
+
+var examSettings = new ExamSettings
+{
+    Exams = examModes ?? new List<ExamMode>()
+};
+
+builder.Services.Configure<ExamSettings>(options =>
+{
+    options.Exams = examSettings.Exams;
+});
+
 
 // Add services to the container.
 
