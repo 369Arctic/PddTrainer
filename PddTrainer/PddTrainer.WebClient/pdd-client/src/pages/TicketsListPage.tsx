@@ -159,7 +159,7 @@ const ExamTile: React.FC<{ exam: ExamMode; onStart: (exam: ExamMode) => void}> =
     <div className="card-subtitle">{exam.totalQuestions} случайных вопросов</div>
     <div className="card-subtitle">{exam.timeMinutes} минут</div>
     {exam.maxMistakes !== undefined && (
-      <div className="card-subtitle"> Не более {exam.maxMistakes}</div>
+      <div className="card-subtitle"> Не более {exam.maxMistakes} ошибок</div>
     )}
     </div>
 );
