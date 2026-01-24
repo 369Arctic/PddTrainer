@@ -55,12 +55,12 @@ const TicketPage: React.FC = () => {
             const question = ticket.questions[currentQuestionIndex];
 
             if (!question) {
-                navigate(`/ticket/${ticket.id}/result`, {
-                    state: { answers, answersText }
+                navigate(`/ticket/result`, {
+                    state: { ticket, answers, answersText }
                 });
             }
         }
-    }, [loading, ticket, currentQuestionIndex, answers, navigate]);
+    }, [loading, ticket, currentQuestionIndex, answers, answersText, navigate]);
 
     if (loading) return <div>Загрузка билета...</div>;
     if (error) return <div>{error}</div>;

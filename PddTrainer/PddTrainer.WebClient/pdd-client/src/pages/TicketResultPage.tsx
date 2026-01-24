@@ -1,35 +1,34 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function TicketResultPage() {
     const navigate = useNavigate();
-    const { id } = useParams();
     const location = useLocation();
 
+    const ticket = location.state?.ticket;
     const answers = location.state?.answers ?? {};
     const answersText = location.state?.answersText ?? {};
 
-    const [ticket, setTicket] = useState<any>(null);
     const [currentWrongIndex, setCurrentWrongIndex] = useState(0);
 
-    useEffect(() => {
-        fetch(`https://localhost:7269/api/tickets/${id}`)
-            .then((r) => r.json())
-            .then((data) => {
-                data.questions = data.questions.map((q: any, idx: number) => ({
-                    ...q,
-                    orderNumber: idx + 1
-                }));
-                setTicket(data);
-            })
-            .catch((err) => console.error(err));
-    }, [id]);
+    if (!ticket) {
+        return (
+            <div style={{ padding: 30 }}>
+                Данные билета недоступны.
+                <div style={{ marginTop: 20 }}>
+                    <button onClick={() => navigate("/")} style={mainBtn}>
+                        На главную
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
-    if (!ticket) return <div style={{ padding: 30 }}>Загрузка билета...</div>;
+    const wrongQuestions = ticket.questions.filter(
+        (q: any) => answers[q.id] !== true
+    );
 
-    const wrongQuestions = ticket.questions.filter((q: any) => answers[q.id] !== true);
-
-    if (wrongQuestions.length === 0)
+    if (wrongQuestions.length === 0) {
         return (
             <div style={{ padding: 30, fontSize: 22 }}>
                 Поздравляем! Все ответы верные.
@@ -40,6 +39,7 @@ export default function TicketResultPage() {
                 </div>
             </div>
         );
+    }
 
     const currentQuestion = wrongQuestions[currentWrongIndex];
     const userAnswer = answersText[currentQuestion.id] ?? "—";
@@ -48,8 +48,9 @@ export default function TicketResultPage() {
 
     return (
         <div style={page}>
-            <h1 style={title}>Ошибки в билете {ticket.title}</h1>
+            <h1 style={title}>Ошибки в билете</h1>
 
+            {/* Нумерация ошибочных вопросов */}
             <div
                 style={{
                     display: "flex",
@@ -59,11 +60,11 @@ export default function TicketResultPage() {
                     marginBottom: 30
                 }}
             >
-                {wrongQuestions.map((q: any, idx: number) => {
+                {wrongQuestions.map((_: any, idx: number) => {
                     const isCurrent = idx === currentWrongIndex;
                     return (
                         <button
-                            key={q.id}
+                            key={idx}
                             onClick={() => setCurrentWrongIndex(idx)}
                             style={{
                                 width: 36,
@@ -80,7 +81,7 @@ export default function TicketResultPage() {
                                 transition: "all 0.3s"
                             }}
                         >
-                            {q.orderNumber}
+                            {idx + 1}
                         </button>
                     );
                 })}
@@ -88,7 +89,9 @@ export default function TicketResultPage() {
 
             {/* Текущий вопрос */}
             <div style={questionCard}>
-                <h2 style={questionTitle}>Вопрос {currentQuestion.orderNumber}</h2>
+                <h2 style={questionTitle}>
+                    Вопрос {currentWrongIndex + 1}
+                </h2>
 
                 {currentQuestion.imageUrl && (
                     <img
@@ -106,17 +109,23 @@ export default function TicketResultPage() {
 
                 <div style={{ marginTop: 20 }}>
                     <p style={row}>
-                        <span style={{ ...label, color: "#e74c3c" }}>Ваш ответ:</span>
+                        <span style={{ ...label, color: "#e74c3c" }}>
+                            Ваш ответ:
+                        </span>
                         <span style={value}>{userAnswer}</span>
                     </p>
 
                     <p style={row}>
-                        <span style={{ ...label, color: "#2ecc71" }}>Правильный ответ:</span>
+                        <span style={{ ...label, color: "#2ecc71" }}>
+                            Правильный ответ:
+                        </span>
                         <span style={value}>{correctAnswer}</span>
                     </p>
 
                     {currentQuestion.explanation && (
-                        <div style={explanation}>{currentQuestion.explanation}</div>
+                        <div style={explanation}>
+                            {currentQuestion.explanation}
+                        </div>
                     )}
                 </div>
             </div>
@@ -124,10 +133,8 @@ export default function TicketResultPage() {
             {/* Кнопки навигации */}
             <div style={btnRow}>
                 <button
-                    onClick={() => navigate(`/ticket/${id}`)}
-                    style={mainBtn}
-                >
-                    Перерешать билет
+                    onClick={() => navigate(-1)} style={mainBtn}>
+                    Перерешать
                 </button>
 
                 <button
