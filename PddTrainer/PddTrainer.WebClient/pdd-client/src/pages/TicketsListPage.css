@@ -38,7 +38,7 @@
 }
 
 .card {
-  background: #ffffff;
+  background: #dcf3f5;
   border-radius: 14px;
   padding: 18px 20px;
   cursor: pointer;
@@ -66,4 +66,11 @@
   padding: 40px;
   text-align: center;
   color: #777;
+}
+
+.grid-exams {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
