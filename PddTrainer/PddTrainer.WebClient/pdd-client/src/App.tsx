@@ -9,8 +9,9 @@ const App: React.FC = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<TicketsListPage />} />
-         <Route path="/ticket/:id" element={<TicketPage />} />
-         <Route path="/ticket/:id/result" element={<TicketResultPage />} />
+        <Route path="/ticket/:id" element={<TicketPage />} />
+        <Route path="/theme/:themeId" element={<TicketPage />} />
+        <Route path="/ticket/result" element={<TicketResultPage />} />
       </Routes>
     </BrowserRouter>
   );

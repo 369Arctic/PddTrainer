@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getTicketById } from "../api/tickets";
+import { getTicketByThemeId} from "../api/tickets";
 import { useNavigate } from "react-router-dom";
 import type { Ticket, Question, AnswerOption } from "../types/models";
 
 const TicketPage: React.FC = () => {
     const navigate = useNavigate();
-    const { id } = useParams<{ id: string }>();
+    const { id, themeId } = useParams();
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -20,14 +21,25 @@ const TicketPage: React.FC = () => {
     useEffect(() => {
         const fetchTicket = async () => {
             try {
-                if (!id) return;
-                const data = await getTicketById(Number(id));
-                setTicket(data);
+                var data = null;
+                if (id) {
+                    data = await getTicketById(Number(id));
+                } else if (themeId) {
+                    data = await getTicketByThemeId(Number(themeId));
+                }
+                if (!data){
+                    setError("Билет не найден");
+                    return;
+                }
+
                 // Добавляем orderNumber
                 data.questions = data.questions.map((q: any, idx: number) => ({
                     ...q,
                     orderNumber: idx + 1
                 }));
+
+                setTicket(data);
+
             } catch (err) {
                 console.error(err);
                 setError("Ошибка при загрузке билета");
@@ -36,19 +48,19 @@ const TicketPage: React.FC = () => {
             }
         };
         fetchTicket();
-    }, [id]);
+    }, [id, themeId]);
 
     useEffect(() => {
         if (!loading && ticket) {
             const question = ticket.questions[currentQuestionIndex];
 
             if (!question) {
-                navigate(`/ticket/${ticket.id}/result`, {
-                    state: { answers, answersText }
+                navigate(`/ticket/result`, {
+                    state: { ticket, answers, answersText }
                 });
             }
         }
-    }, [loading, ticket, currentQuestionIndex, answers, navigate]);
+    }, [loading, ticket, currentQuestionIndex, answers, answersText, navigate]);
 
     if (loading) return <div>Загрузка билета...</div>;
     if (error) return <div>{error}</div>;

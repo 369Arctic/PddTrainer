@@ -12,3 +12,8 @@ export async function getTicketById(id: number): Promise<Ticket> {
   const response = await http.get<Ticket>(`/Tickets/${id}`);
   return response.data;
 }
+
+export async function getTicketByThemeId(themeId: number): Promise<Ticket> {
+  const response = await http.get<Ticket>(`/Tickets/theme/${themeId}`);
+  return response.data;
+}
