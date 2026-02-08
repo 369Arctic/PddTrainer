@@ -31,6 +31,8 @@ namespace PddTrainer.Api.Controllers
         [HttpGet("{examId}")]
         public async Task<IActionResult> GetExam(string examId)
         {
+            _logger.Information("Запрос экзамена с режимом {ModeId}", examId);
+
             var mode = _examSettings.Exams.FirstOrDefault(u => u.Id == examId);
             if (mode == null)
             {
@@ -38,20 +40,27 @@ namespace PddTrainer.Api.Controllers
                 return NotFound("Экзамен не найден");
             }
 
-            var questions = await _context.Questions
+            var allQuestions = await _context.Questions
                 .Include(u => u.AnswerOptions)
                 .ToListAsync();
 
-            var random = new Random();
-            var selectedQuestions = questions
-                .OrderBy(u => random.Next())
+            if (!allQuestions.Any())
+            {
+                _logger.Error("Для экзамена {examId} не найдено вопросов", examId);
+                return StatusCode(500, "Нет вопросов для экзамена");
+            }
+
+            var questions = allQuestions
+                .OrderBy(_ => Random.Shared.Next())
                 .Take(mode.TotalQuestions)
                 .ToList();
 
             var examDto = _mapper.Map<ExamDto>(mode);
-            examDto.Questions = _mapper.Map<List<QuestionDto>>(selectedQuestions);
+            examDto.Questions = _mapper.Map<List<QuestionDto>>(questions);
 
-            _logger.Information("Вопросы для экзамена с Id {examId} успешно сформированы.", examId);
+            _logger.Information("Экзамен {examId} сформирован. Вопросов: {Count}",
+                examId,questions.Count);
+
             return Ok(examDto);
         }
     }
