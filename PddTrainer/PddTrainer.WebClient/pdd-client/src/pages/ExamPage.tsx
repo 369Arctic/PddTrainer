@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getExamById } from "../api/exams";
 import type { Question, AnswerOption } from "../types/models";
 
+import "./TicketPage.css"
+
 type ExamDto = {
   id: string;
   title: string;
@@ -26,6 +28,7 @@ const ExamPage: React.FC = () => {
   const [failed, setFailed] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [isExamFinished, setIsExamFinished] = useState(false);
 
   // Загрузка экзамена.
   useEffect(() => {
@@ -48,6 +51,8 @@ const ExamPage: React.FC = () => {
   // Завершение экзамена
   const finishExam = useCallback(
     (timeExpired = false) => {
+      setIsExamFinished(true);
+
       navigate("/exam/result", {
         state: {
           exam,
@@ -103,7 +108,6 @@ const ExamPage: React.FC = () => {
       setCurrentIndex(prev => prev + 1);
     },
     [exam]);
-
   
   const handleAnswerClick = (answer: AnswerOption) => {
     if (!exam) return;
@@ -116,6 +120,7 @@ const ExamPage: React.FC = () => {
   };
 
   // UI
+  // TOOD - в ресурсы или константы.
   if (loading) return <div>Загрузка экзамена…</div>;
   if (!exam) return <div>Экзамен не найден</div>;
 
@@ -126,35 +131,29 @@ const ExamPage: React.FC = () => {
   const seconds = timeLeft % 60;
 
   return (
-    <div style={{ maxWidth: 720, margin: "0 auto", padding: 20 }}>
-      <h2>{exam.title}</h2>
-
-      <div style={{ marginBottom: 10 }}>
-        ⏱ {minutes}:{seconds.toString().padStart(2, "0")}
+    <div className="exam-container">
+      <div className="exam-header">
+        <h2 className="exam-title">{exam.title}</h2>
+        <div className="exam-timer">
+          {minutes}: {seconds.toString().padStart(2, "0")}
+        </div>
       </div>
 
       {/* Навигация по вопросам */}
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 20 }}>
+      <div className="questions-navigation">
         {exam.questions.map((q, idx) => {
           const isCurrent = idx === currentIndex;
           const isAnswered = answers[q.id] !== undefined;
+          let className = "";
+
+          if (isCurrent) className = "answer-selected";
+          else if (isAnswered) className = "answer-correct";
 
           return (
             <button
               key={q.id}
               onClick={() => setCurrentIndex(idx)}
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: "50%",
-                border: isCurrent ? "2px solid #ff9800" : "none",
-                backgroundColor: isCurrent
-                  ? "#ffcc80"
-                  : isAnswered
-                  ? "#b3e4f0"
-                  : "#eee",
-                cursor: "pointer",
-              }}
+              className={`exam-button exam-button-circle ${className}`}
             >
               {idx + 1}
             </button>
@@ -162,39 +161,39 @@ const ExamPage: React.FC = () => {
         })}
       </div>
 
-      <p>{question.text}</p>
+      <div className="question-card">
+        <p className="question-text">{question.text}</p>
 
-      {question.imageUrl && (
-        <img
-          src={`${API_BASE_URL}${question.imageUrl}`}
-          alt="Вопрос"
-          style={{ maxWidth: "100%", marginBottom: 10 }}
+        {question.imageUrl && (
+          <img
+            src={`${API_BASE_URL}${question.imageUrl}`}
+            alt="Вопрос"
+            className="question-image"
         />
-      )}
+        )}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {question.answerOptions.map(answer => {
-          const isAnswered = answers[question.id] !== undefined;
-          const isSelected = answers[question.id] === answer.id;
+        <div className="answers-list">
+          {question.answerOptions.map((answer) => {
+            const isAnswered = answers[question.id] !== undefined;
+            const isSelected = answers[question.id] === answer.id;
 
-          return (
-            <button
-              key={answer.id}
-              onClick={() => handleAnswerClick(answer)}
-              disabled={isAnswered}
-              style={{
-                padding: 12,
-                borderRadius: 8,
-                border: "1px solid #ccc",
-                textAlign: "left",
-                backgroundColor: isSelected ? "#cce5ff" : "#fff",
-                cursor: isAnswered ? "default" : "pointer",
-              }}
-            >
-              {answer.text}
-            </button>
-          );
-        })}
+            let answerClass = "answer-option";
+            if (isSelected){
+              answerClass += " answer-selected";
+            }
+
+            return (
+              <button
+                key={answer.id}
+                onClick={() => handleAnswerClick(answer)}
+                disabled={isAnswered}
+                className={answerClass}
+              >
+                {answer.text}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

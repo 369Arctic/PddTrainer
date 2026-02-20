@@ -1,0 +1,115 @@
+.exam-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.exam-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.exam-title {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.exam-timer {
+    font-size: 16px;
+    font-weight: 500;
+    color: #555;
+}
+
+.question-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+}
+
+.question-text {
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+.questions-navigation {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.question-image {
+    display: block;
+    max-width: 100%;
+    margin: 0 auto 16px;
+    border-radius: 8px;
+}
+
+.answers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.answer-option {
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.answer-option:hover {
+    background: #f6f7f8;
+}
+
+.answer-selected {
+    border-color: #4c7cf3;
+    background: #eef2ff;
+}
+
+.answer-correct {
+    border-color: #2ecc71;
+    background: #eafaf1;
+}
+
+.answer-wrong {
+    border-color: #e74c3c;
+    background: #fdecea;
+}
+
+.exam-button {
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.exam-button-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    padding: 0;
+}
+
+.exam-button-primary {
+    background: #4c7cf3;
+    color: #fff;
+}
+
+.exam-button-secondary {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.exam-button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
