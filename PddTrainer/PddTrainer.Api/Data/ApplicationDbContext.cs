@@ -11,6 +11,7 @@ namespace PddTrainer.Api.Data
         public DbSet<Question> Questions => Set<Question>();
         public DbSet<AnswerOption> AnswerOptions => Set<AnswerOption>();
         public DbSet<Theme> Themes => Set<Theme>();
+        public DbSet<User> Users => Set<User>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,7 +36,11 @@ namespace PddTrainer.Api.Data
                 .HasOne(q => q.Theme)
                 .WithMany(t => t.Questions)
                 .HasForeignKey(q => q.ThemeId)
-                .OnDelete(DeleteBehavior.SetNull); 
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
         }
     }
 }
