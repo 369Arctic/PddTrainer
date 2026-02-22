@@ -6,6 +6,7 @@ namespace PddTrainer.Api.Models
     {
         public int Id { get; set; }
 
+        // TODO добавить проверку на шаблон email
         [Required]
         [MaxLength(255)]
         public string Email { get; set; }
