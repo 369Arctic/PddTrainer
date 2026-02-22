@@ -11,8 +11,8 @@ using ILogger = Serilog.ILogger;
 
 namespace PddTrainer.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ExamsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
