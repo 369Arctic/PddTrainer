@@ -2,7 +2,7 @@
 
 namespace PddTrainer.Api.Models.DTO
 {
-    public class RegisterRequest
+    public class RegisterRequestDto
     {
         [Required]
         [EmailAddress]

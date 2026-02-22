@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PddTrainer.Api.Data;
 using PddTrainer.Api.Models;
+using PddTrainer.Api.Models.DTO;
 using Serilog;
 
 namespace PddTrainer.Api.Controllers
@@ -20,7 +21,7 @@ namespace PddTrainer.Api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
         {
             var email = request.Email.Trim().ToLowerInvariant();
 
