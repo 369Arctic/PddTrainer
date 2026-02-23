@@ -26,7 +26,8 @@ builder.Host.UseSerilog();
 
 var examModes = builder.Configuration.GetSection("Exams").Get<List<ExamMode>>();
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!);
+var secretKey = builder.Configuration["JWT_SECRET_KEY"]
+    ?? throw new Exception("JWT secret key is not configured");
 
 var examSettings = new ExamSettings
 {
@@ -69,7 +70,7 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtSettings["Issuer"],
             ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(key)
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
         };
 
         // Прочтение токена из cookie.

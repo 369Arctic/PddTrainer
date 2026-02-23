@@ -19,8 +19,10 @@ namespace PddTrainer.Api.Services
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
 
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));
+            var secretKey = _configuration["JWT_SECRET_KEY"]
+                ?? throw new Exception("JWT secret key is not configured");
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
