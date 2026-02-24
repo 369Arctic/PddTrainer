@@ -13,6 +13,9 @@ namespace PddTrainer.Api.Data
         public DbSet<Theme> Themes => Set<Theme>();
         public DbSet<User> Users => Set<User>();
 
+        public DbSet<Attempt> Attempts => Set<Attempt>();
+        public DbSet<AttemptAnswer> AttemptAnswers => Set<AttemptAnswer>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -41,6 +44,36 @@ namespace PddTrainer.Api.Data
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
+
+            modelBuilder.Entity<Attempt>()
+                .HasMany(a => a.Answers)
+                .WithOne(a => a.Attempt)
+                .HasForeignKey(a => a.AttemptId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Attempt>()
+                .HasOne(t => t.Theme)
+                .WithMany()
+                .HasForeignKey(t => t.ThemeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Attempt>()
+                .HasOne(t => t.Ticket)
+                .WithMany()
+                .HasForeignKey(t => t.TicketId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Attempt>()
+                .HasOne(u => u.User)
+                .WithMany()
+                .HasForeignKey(u => u.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AttemptAnswer>()
+                .HasOne(q => q.Question)
+                .WithMany()
+                .HasForeignKey(q => q.QuestionId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
