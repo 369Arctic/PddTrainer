@@ -7,6 +7,7 @@ using PddTrainer.Api.Data;
 using PddTrainer.Api.Models;
 using PddTrainer.Api.Models.DTO;
 using PddTrainer.Api.Services;
+using PddTrainer.Api.Services.Interfaces;
 using Serilog;
 using System.Security.Claims;
 
@@ -17,9 +18,9 @@ namespace PddTrainer.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly JwtService _jwtService;
+        private readonly IJwtService _jwtService;
 
-        public AuthController(ApplicationDbContext context, JwtService jwtService)
+        public AuthController(ApplicationDbContext context, IJwtService jwtService)
         {
             _context = context;
             _jwtService = jwtService;
@@ -82,7 +83,8 @@ namespace PddTrainer.Api.Controllers
             return Ok(new { message = "Logged in successfully" });
         }
 
-        /* Тестовый метод для проверки авторизации в Swagger.
+        // Тестовый метод для проверки авторизации в Swagger.
+        /*
         [Authorize]
         [HttpGet("me")]
         public IActionResult Me()
