@@ -1,12 +1,13 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using PddTrainer.Api.Models;
+using PddTrainer.Api.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace PddTrainer.Api.Services
 {
-    public class JwtService
+    public class JwtService : IJwtService
     {
         private readonly IConfiguration _configuration;
 
