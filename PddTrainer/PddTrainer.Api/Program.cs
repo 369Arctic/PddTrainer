@@ -40,7 +40,6 @@ builder.Services.Configure<ExamSettings>(options =>
     options.Exams = examSettings.Exams;
 });
 
-
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -52,8 +51,11 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddDbContext<ApplicationDbContext>
     (options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddHttpClient();
+
 builder.Services.AddScoped<QuestionThemeMatcher>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IAttemptService, AttemptService>();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

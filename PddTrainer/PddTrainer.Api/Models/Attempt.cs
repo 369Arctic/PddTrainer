@@ -21,7 +21,7 @@
         public int TotalQuestions { get; set; }
         public int CorrectAnswers { get; set; }
         public int Mistakes { get; set; }
-        public int Passed { get; set; }
+        public bool Passed { get; set; }
 
         public DateTime StartedAt { get; set; }
         public DateTime CompletedAt { get; set; }
