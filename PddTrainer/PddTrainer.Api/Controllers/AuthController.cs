@@ -84,6 +84,7 @@ namespace PddTrainer.Api.Controllers
         }
 
         // Тестовый метод для проверки авторизации в Swagger.
+        /*
         [Authorize]
         [HttpGet("me")]
         public IActionResult Me()
@@ -93,6 +94,6 @@ namespace PddTrainer.Api.Controllers
 
             return Ok(new { userId, email });
         }
-        
+        */
     }
 }
