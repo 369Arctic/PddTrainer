@@ -3,7 +3,9 @@ import { useParams } from "react-router-dom";
 import { getTicketById } from "../api/tickets";
 import { getTicketByThemeId} from "../api/tickets";
 import { useNavigate } from "react-router-dom";
+import { submitAttempt } from "../api/attempts";
 import type { Ticket, Question, AnswerOption } from "../types/models";
+import { AttemptType } from "../types/attemptTypes";
 
 const TicketPage: React.FC = () => {
     const navigate = useNavigate();
@@ -13,10 +15,11 @@ const TicketPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-    const [answers, setAnswers] = useState<{ [key: number]: boolean }>({});
+    const [answers, setAnswers] = useState<{ [key: number]: number }>({});
     const [selectedAnswerId, setSelectedAnswerId] = useState<number | null>(null);
-    const [answersText, setAnswersText] = useState<{ [key: number]: string }>({});
     const [showHint, setShowHint] = useState<boolean>(false);
+
+    const [startedAt] = useState<string>(new Date().toISOString());
 
     useEffect(() => {
         const fetchTicket = async () => {
@@ -50,17 +53,7 @@ const TicketPage: React.FC = () => {
         fetchTicket();
     }, [id, themeId]);
 
-    useEffect(() => {
-        if (!loading && ticket) {
-            const question = ticket.questions[currentQuestionIndex];
-
-            if (!question) {
-                navigate(`/ticket/result`, {
-                    state: { ticket, answers, answersText }
-                });
-            }
-        }
-    }, [loading, ticket, currentQuestionIndex, answers, answersText, navigate]);
+    
 
     if (loading) return <div>Загрузка билета...</div>;
     if (error) return <div>{error}</div>;
@@ -71,13 +64,16 @@ const TicketPage: React.FC = () => {
     // === Статистика после прохождения всех вопросов ===
     if (!question) return null;
 
+    const totalQuestions = ticket.questions.length;
+    const answeredCount = Object.keys(answers).length;
+    const allAnswered = answeredCount === totalQuestions;
+
     const handleAnswerClick = (answer: AnswerOption) => {
         if (answers[question.id] !== undefined) return;
 
         setSelectedAnswerId(answer.id);
-        setAnswersText(prev => ({ ...prev, [question.id]: answer.text }));
         const isCorrect = answer.isCorrect;
-        setAnswers(prev => ({ ...prev, [question.id]: isCorrect }));
+        setAnswers(prev => ({ ...prev, [question.id]: answer.id }));
 
         if (isCorrect) {
             setShowHint(false);
@@ -87,6 +83,14 @@ const TicketPage: React.FC = () => {
         }
     };
 
+    const goToNextQuestionOrFinish = () => {
+        if (currentQuestionIndex === totalQuestions - 1){
+            finishAttempt();
+        } else {
+            goToNextQuestion();
+        }
+    };
+    
     const goToNextQuestion = () => {
         // скрыть подсказку и снять выделение выбранного варианта
         setShowHint(false);
@@ -94,6 +98,43 @@ const TicketPage: React.FC = () => {
         setCurrentQuestionIndex(prev => prev + 1);
     };
 
+    const finishAttempt = async () => {
+    if (!allAnswered) {
+        alert("Нужно ответить на все вопросы перед завершением билета.");
+        return;
+    }
+
+    try {
+        const dto = {
+            type: themeId ? Number(AttemptType.Theme) : Number(AttemptType.Ticket),
+            themeId: themeId ? Number(themeId) : undefined,
+            ticketId: id ? Number(id) : undefined,
+            startedAt,
+            answers: Object.entries(answers).map(([questionId, answerId]) => ({
+                questionId: Number(questionId),
+                selectedAnswerId: Number(answerId)
+            }))
+        };
+
+        const result = await submitAttempt(dto);
+
+        navigate("/ticket/result", {
+            state: {
+                ticket,
+                answers,
+                correct: result.correctAnswers,
+                mistakes: result.mistakes,
+                passed: result.passed,
+                attemptId: result.id
+            }
+        });
+
+    }
+    catch (err) {
+        console.error(err);
+        setError("Ошибка при сохранении попытки.");
+    }
+    };
 
     const handleQuestionJump = (index: number) => {
         setCurrentQuestionIndex(index);
@@ -105,26 +146,27 @@ const TicketPage: React.FC = () => {
         <div style={{ padding: "20px", maxWidth: "700px", margin: "0 auto" }}>
             <h2>{ticket.title}</h2>
 
+            <div style={{ marginBottom: 20 }}>
+                Ответов: {answeredCount} / {totalQuestions}
+            </div>
+
             {/* Нумерация вопросов */}
             <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "20px" }}>
                 {ticket.questions.map((q, idx) => {
-                    const answered = answers[q.id];
+                    const selectedId = answers[q.id];
+                    const answered = selectedId !== undefined;
                     const isCurrent = currentQuestionIndex === idx;
 
-                    let bgColor = "#eee";
+                    let bgColor = "#f44336";
                     let color = "#000";
 
-                    if (answered === true) {
-                        bgColor = "#4caf50";
-                        color = "#fff";
-                    } else if (answered === false) {
-                        bgColor = "#f44336";
-                        color = "#fff";
-                    }
-
-                    if (isCurrent) {
-                        bgColor = "#333";
-                        color = "#fff";
+                    if (answered) {
+                        const selectedOption = q.answerOptions.find(a => a.id === selectedId);
+                        if (selectedOption?.isCorrect){
+                            bgColor = "#4caf50";
+                        }
+                    } else {
+                        bgColor = "#f5f1f1"; 
                     }
 
                     return (
@@ -212,7 +254,7 @@ const TicketPage: React.FC = () => {
                     </button>
 
                     <button
-                        onClick={goToNextQuestion}
+                        onClick={goToNextQuestionOrFinish}
                         style={{
                             padding: "6px 10px",
                             cursor: "pointer",

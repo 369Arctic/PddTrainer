@@ -5,6 +5,7 @@ import TicketPage from "./pages/TicketPage";
 import TicketResultPage from "./pages/TicketResultPage";
 import ExamPage from "./pages/ExamPage";
 import ExamResultPage from "./pages/ExamResultPage";
+import LoginPage from "./pages/LoginPage";
 
 const App: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const App: React.FC = () => {
         <Route path="/ticket/result" element={<TicketResultPage />} />
         <Route path="/exam/:examId" element={<ExamPage />} />
         <Route path="/exam/result" element={<ExamResultPage />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
     </BrowserRouter>
   );

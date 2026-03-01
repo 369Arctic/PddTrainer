@@ -93,7 +93,8 @@ builder.Services.AddCors(options =>
         builder => builder
             .WithOrigins("http://localhost:5173") // React dev-сервер
             .AllowAnyHeader()
-            .AllowAnyMethod());
+            .AllowAnyMethod()
+            .AllowCredentials());
 });
 
 

@@ -7,7 +7,6 @@ export default function TicketResultPage() {
 
     const ticket = location.state?.ticket;
     const answers = location.state?.answers ?? {};
-    const answersText = location.state?.answersText ?? {};
 
     const [currentWrongIndex, setCurrentWrongIndex] = useState(0);
 
@@ -24,9 +23,15 @@ export default function TicketResultPage() {
         );
     }
 
-    const wrongQuestions = ticket.questions.filter(
-        (q: any) => answers[q.id] !== true
-    );
+    const wrongQuestions = ticket.questions.filter((q: any) => {
+        const selectedId = answers[q.id];
+        if(selectedId === undefined) return true;
+
+        const selectedOption = q.answerOptions.find(
+            (a: any) => a.id === selectedId
+        );
+        return !selectedOption?.isCorrect;
+    });
 
     if (wrongQuestions.length === 0) {
         return (
@@ -42,7 +47,11 @@ export default function TicketResultPage() {
     }
 
     const currentQuestion = wrongQuestions[currentWrongIndex];
-    const userAnswer = answersText[currentQuestion.id] ?? "—";
+    const selectedId = answers[currentQuestion.id];
+    const userAnswer = currentQuestion.answerOptions?.find(
+        (a: any) => a.id === selectedId
+    )?.text ?? "—";
+    
     const correctAnswer =
         currentQuestion.answerOptions?.find((a: any) => a.isCorrect)?.text ?? "—";
 

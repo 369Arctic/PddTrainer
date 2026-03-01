@@ -28,7 +28,6 @@ const ExamPage: React.FC = () => {
   const [failed, setFailed] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [loading, setLoading] = useState(true);
-  const [isExamFinished, setIsExamFinished] = useState(false);
 
   // Загрузка экзамена.
   useEffect(() => {
@@ -51,8 +50,6 @@ const ExamPage: React.FC = () => {
   // Завершение экзамена
   const finishExam = useCallback(
     (timeExpired = false) => {
-      setIsExamFinished(true);
-
       navigate("/exam/result", {
         state: {
           exam,
